@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+DisProt_2022_06.fasta
+DisProt_2022_06.fasta.fai
