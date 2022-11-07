@@ -1,5 +1,6 @@
 from pyfaidx import Fasta
 
+
 waltz_seq = ()
 waltz_dict = {}    #dictionry for sequences from WaltzDB
 with open('WALTZ_DB_amiloid_seq') as waltz_db:
