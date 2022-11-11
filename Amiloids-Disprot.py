@@ -1,10 +1,12 @@
 from pyfaidx import Fasta
 
 
-waltz_seq = ()
+waltz_seq = []
 waltz_dict = {}    #dictionry for sequences from WaltzDB
 with open('WALTZ_DB_amiloid_seq') as waltz_db:
-    waltz_seq = waltz_db.readlines()  # reading seq from the file
+    for line in waltz_db:
+        line = line.strip()
+        waltz_seq.append(line) # reading seq from the file
     for i, count in enumerate(waltz_seq):
         if count.strip().isalpha() == False:  # deleting empty lines
             break
@@ -18,7 +20,7 @@ with Fasta('DisProt_2022_06.fasta') as genes:
             seq_1000[genes[i][:].name] = genes[i][:]
 for key, seq in seq_1000.items():
     for val in waltz_dict.values():
-        if val in seq:
+        if val in str(seq):
             filter_seq[key] = seq
 for key, val in filter_seq.items():
     print(key, val)
