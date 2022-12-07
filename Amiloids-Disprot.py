@@ -1,71 +1,76 @@
 from pyfaidx import Fasta
 import csv
 
-waltz_seq = []
-waltz_dict = {}    #dictionry for sequences from WaltzDB
+# reading of the file with amiloids motifs
+waltz_seq = []       # list for short motifs of amiloid
+waltz_dict = {}      # dictionry for sequences from WaltzDB
 with open('WALTZ_DB_amiloid_seq') as waltz_db:
     for line in waltz_db:
         line = line.strip()
-        waltz_seq.append(line) # reading seq from the file
-    for i, count in enumerate(waltz_seq):
-        if count.strip().isalpha() == False:  # deleting empty lines
+        waltz_seq.append(line)
+    for number, amiloid_motif in enumerate(waltz_seq):
+        if amiloid_motif.strip().isalpha() == False:    # deleting empty lines
             break
         else:
-            waltz_dict[i] = count
+            waltz_dict[number] = amiloid_motif
 
-seq_1000 = dict()  # dict for all sequences which are shorter than 1000 residues
-filter_seq = dict()  # dict for seq that have amiloid-forming region
+# filter all sequences which are shorter than 1000 residues
+seq_1000 = {}  # dict for all sequences which are shorter than 1000 residues
 with Fasta('DisProt_2022_06.fasta') as genes:
-    for i in range((len(genes.keys()))):
-        if genes[i][:].end < 1000:
-            seq_1000[genes[i][:].name] = genes[i][:]
+    for number_of_peptide in range((len(genes.keys()))):
+        if genes[number_of_peptide][:].end < 1000:
+            seq_1000[genes[number_of_peptide][:].name] = genes[number_of_peptide][:]
 
-tsv_list = {}
-count = 0
+# reading tsv file, which contains UniProt names for all peptides from DisProt. They will be used in final fasta
+tsv_list = {}  # dict for pairs "UniProt_name - Sequence"
 with open('DisProt release_2022_06.tsv') as tsv:
     file = csv.reader(tsv, delimiter='\t')
     for rows in file:
-        while '' in rows:
+        while '' in rows:     # deleting empty elements from tsv
             rows.remove('')
-        for i in range(0, len(rows)):
-            tsv_list[rows[len(rows)-1]] = rows[0]
+        tsv_list[rows[len(rows)-1]] = rows[0]
 
-new_tsv = {}
-short_amiloid_list_for_head = {}
+# finding peptides with amiloid motifs
+new_tsv = {}   # dict for remembering UniProt names of filtered peptides
+amiloid_motifs_list_for_header = {}  # remembering amiloid motifs for each peptide, which have amiloid-forming region
+filter_seq = {}  # dict for seq that have amiloid-forming regions
 for key, seq in seq_1000.items():
-    short_amiloid_list = []
+    amiloid_motifs_list = []   # updated list for all amiloid motifs in one peptide
     for val in waltz_dict.values():
-        if val in str(seq):
-            #if str(seq) not in filter_seq.values():
+        if val in str(seq):  #
             filter_seq[key] = seq
-            short_amiloid_list.append(val)
-            short_amiloid_list_for_head[key] = short_amiloid_list
+            amiloid_motifs_list.append(val)
             for pep, uni in tsv_list.items():
                 if str(seq) in pep:
                     new_tsv[pep] = uni
+        amiloid_motifs_list_for_header[key] = amiloid_motifs_list
 
-delet_repeats = []
+'''
+filter_seq_no_repeats = {}
 for key, seq in filter_seq.items():
-    delet_repeats.append([key, str(seq)])
+    r = 0
+    new_key = str(key).replace('disprot|', '')
+    finish = str(new_key).find('r')
+    for dp_id, am_a in filter_seq_no_repeats.items():
+        if new_key[:finish] == dp_id:
+            r += 1
+            if str(am_a) == str(seq) or len(str(am_a)) > len(str(seq)):
+                continue
+            elif len(str(am_a)) < len(str(seq)):
+                filter_seq_no_repeats['disprot|' + new_key[:finish]] = seq
+    if r == 0:
+        filter_seq_no_repeats['disprot|' + new_key[:finish]] = seq
 
-delet_repeats2 = []
-for couples in delet_repeats:
-    count = 0
-    count2 = 0
-    for coup in delet_repeats2:
-        if couples[1] in coup[1]:
-            count += 1
-        elif coup[1] in couples[1]:
-            count2 += 1
-    if count == 0:
-        delet_repeats2.append(couples)
-
-
+'''
 discriptor = []
 with Fasta('DisProt_2022_06.fasta') as genes:
     for record in genes:
         line = record.long_name
-        discriptor.append(line[:])
+        finding_pos = str(line)[str(line).find('pos'):]
+        finding_pos = finding_pos.replace(finding_pos[:finding_pos.find(' ')], '')
+        finding_pos_2 = str(line)[:str(line).find('pos')]
+        final_disc = finding_pos_2 + finding_pos
+        discriptor.append(final_disc)
 
 amiloid_seq_no_amil_disc = {}
 for key, val in filter_seq.items():
@@ -75,7 +80,7 @@ for key, val in filter_seq.items():
 
 amil_seq = {}
 fasta_uniprot = {}
-for key, val in amiloid_seq_no_amil_disc.items():
+for key, val in filter_seq.items():
     head_for_fasta_new = key
     head_for_fasta = key
     amils_for_uniprot = ''
@@ -84,33 +89,18 @@ for key, val in amiloid_seq_no_amil_disc.items():
     for pep, uni in new_tsv.items():
         if str(val) in pep:
             head_for_fasta_new = '>UniProt|' + uni + ' ' + head_for_fasta.replace('>', '')
-            uni_for_uniprot = '>UniProt|' + uni
+            uni_for_uniprot = uni
             pep_for_uniprot = pep
-    for key_amil, val_amil in short_amiloid_list_for_head.items():
+    for key_amil, val_amil in amiloid_motifs_list_for_header.items():
         if key_amil in key:
             for i in val_amil:
                 if ' amilod_seq=' not in head_for_fasta_new:
                     head_for_fasta_new += ' amilod_seq=' + i
                 else:
-                    head_for_fasta_new += ', ' + i
-                if ' amilod_seq=' not in uni_for_uniprot:
-                    uni_for_uniprot += ' amilod_seq=' + i
-                else:
-                    uni_for_uniprot += ', ' + i
-    fasta_uniprot[pep_for_uniprot] = uni_for_uniprot
+                    head_for_fasta_new += '|' + i
+
+    fasta_uniprot[uni_for_uniprot] = pep_for_uniprot
     amil_seq[head_for_fasta_new] = val
-
-'''
-fasta_uniprot_no_repeats = {}
-for pep, uni in fasta_uniprot.items():
-    fasta_uniprot_no_repeats[uni] = pep
-for uni, pep in fasta_uniprot_no_repeats.items():
-    print(uni, pep, sep='\n')
-
-amil_seq_no_repeats = {}
-for key, val in amil_seq.items():
-    amil_seq_no_repeats[str(val)] = key
-'''
 
 table = []
 with open('DisProt release_2022_06.tsv') as tsv:
@@ -124,6 +114,28 @@ with open('DisProt release_2022_06.tsv') as tsv:
             if uni in rows and pep in rows:
                 table.append(rows)
 
+table_short = []
+t = 1
+for line in table:
+    uniprot = line.index('acc')
+    name = line.index('name')
+    organism = line.index('organism')
+    disprot_id = line.index('disprot_id')
+    break
+
+for elem in table:
+    count_short_tab = 0
+    table_short_words = []
+    for lines in table_short:
+        if elem[uniprot] in lines:
+            count_short_tab += 1
+    if count_short_tab == 0:
+        table_short_words.append(elem[uniprot])
+        table_short_words.append(elem[name])
+        table_short_words.append(elem[organism])
+        table_short_words.append(elem[disprot_id])
+        table_short.append(table_short_words)
+
 with open('table_amiloids.tsv', 'w') as tab:
     for elem in table:
         for words in elem:
@@ -134,3 +146,9 @@ with open('Amiloid+Disprot_full_corr', 'w') as A_D:
     for key, val in amil_seq.items():
         A_D.write(str(val) + '\n')
         A_D.write(key + '\n')
+
+with open('UniProt+DisProt_amiloids.tsv', 'w') as tab:
+    for elem in table_short:
+        for words in elem:
+            tab.write(words + ', ')
+        tab.write('\n')
