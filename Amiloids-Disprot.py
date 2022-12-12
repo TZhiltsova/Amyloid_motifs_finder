@@ -46,6 +46,7 @@ for key, seq in seq_1000.items():
         amiloid_motifs_list_for_header[key] = amiloid_motifs_list
 
 '''
+#   algorithm for deleting repeats in fasta
 filter_seq_no_repeats = {}
 for key, seq in filter_seq.items():
     r = 0
@@ -66,11 +67,13 @@ discriptor = []
 with Fasta('DisProt_2022_06.fasta') as genes:
     for record in genes:
         line = record.long_name
+        '''
         finding_pos = str(line)[str(line).find('pos'):]
         finding_pos = finding_pos.replace(finding_pos[:finding_pos.find(' ')], '')
         finding_pos_2 = str(line)[:str(line).find('pos')]
         final_disc = finding_pos_2 + finding_pos
-        discriptor.append(final_disc)
+        '''
+        discriptor.append(str(line))
 
 amiloid_seq_no_amil_disc = {}
 for key, val in filter_seq.items():
@@ -80,17 +83,12 @@ for key, val in filter_seq.items():
 
 amil_seq = {}
 fasta_uniprot = {}
-for key, val in filter_seq.items():
-    head_for_fasta_new = key
-    head_for_fasta = key
-    amils_for_uniprot = ''
-    uni_for_uniprot = ''
-    pep_for_uniprot = ''
+for key, val in amiloid_seq_no_amil_disc.items():
+    head_for_fasta = str(key)
     for pep, uni in new_tsv.items():
+        print(uni)
         if str(val) in pep:
             head_for_fasta_new = '>UniProt|' + uni + ' ' + head_for_fasta.replace('>', '')
-            uni_for_uniprot = uni
-            pep_for_uniprot = pep
     for key_amil, val_amil in amiloid_motifs_list_for_header.items():
         if key_amil in key:
             for i in val_amil:
@@ -98,8 +96,6 @@ for key, val in filter_seq.items():
                     head_for_fasta_new += ' amilod_seq=' + i
                 else:
                     head_for_fasta_new += '|' + i
-
-    fasta_uniprot[uni_for_uniprot] = pep_for_uniprot
     amil_seq[head_for_fasta_new] = val
 
 table = []
@@ -144,8 +140,8 @@ with open('table_amiloids.tsv', 'w') as tab:
 
 with open('Amiloid+Disprot_full_corr', 'w') as A_D:
     for key, val in amil_seq.items():
+        A_D.write(str(key) + '\n')
         A_D.write(str(val) + '\n')
-        A_D.write(key + '\n')
 
 with open('UniProt+DisProt_amiloids.tsv', 'w') as tab:
     for elem in table_short:
