@@ -144,6 +144,7 @@ with open('Amiloid+Disprot_full_corr', 'w') as A_D:
         A_D.write(str(key) + '\n')
         A_D.write(str(val) + '\n')
 
+
 with open('UniProt+DisProt_amiloids.tsv', 'w') as tab:
     for elem in table_short:
         for words in elem:
