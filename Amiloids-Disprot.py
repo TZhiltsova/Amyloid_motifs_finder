@@ -39,6 +39,8 @@ for key, seq in seq_1000.items():
     for val in waltz_dict.values():
         if val in str(seq):  #
             filter_seq[key] = seq
+            pos = str(seq).find(val)
+            val = str(pos) + val
             amiloid_motifs_list.append(val)
             for pep, uni in tsv_list.items():
                 if str(seq) in pep:
@@ -86,7 +88,6 @@ fasta_uniprot = {}
 for key, val in amiloid_seq_no_amil_disc.items():
     head_for_fasta = str(key)
     for pep, uni in new_tsv.items():
-        print(uni)
         if str(val) in pep:
             head_for_fasta_new = '>UniProt|' + uni + ' ' + head_for_fasta.replace('>', '')
     for key_amil, val_amil in amiloid_motifs_list_for_header.items():
