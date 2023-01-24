@@ -39,7 +39,7 @@ for key, seq in seq_1000.items():
     for val in waltz_dict.values():
         if val in str(seq):  #
             filter_seq[key] = seq
-            pos = str(seq).find(val)
+            pos = str(seq).find(val)+1
             val = str(pos) + val
             amiloid_motifs_list.append(val)
             for pep, uni in tsv_list.items():
