@@ -133,11 +133,13 @@ for elem in table:
         table_short_words.append(elem[disprot_id])
         table_short.append(table_short_words)
 
+'''
 with open('table_amiloids.tsv', 'w') as tab:
     for elem in table:
         for words in elem:
             tab.write(words + ', ')
         tab.write('\n')
+'''
 
 with open('Amiloid+Disprot_full_corr', 'w') as A_D:
     for key, val in amil_seq.items():
