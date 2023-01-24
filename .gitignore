@@ -139,3 +139,5 @@ UniProt+DisProt_amiloids.tsv
 .~lock.UniProt+DisProt_amiloids.ods#
 .idea/workspace.xml
 .~lock.table_amiloids.tsv#
+DisProt release_2022_06.tsv
+table_amiloids.tsv
