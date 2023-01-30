@@ -47,34 +47,10 @@ for key, seq in seq_1000.items():
                     new_tsv[pep] = uni
         amiloid_motifs_list_for_header[key] = amiloid_motifs_list
 
-'''
-#   algorithm for deleting repeats in fasta
-filter_seq_no_repeats = {}
-for key, seq in filter_seq.items():
-    r = 0
-    new_key = str(key).replace('disprot|', '')
-    finish = str(new_key).find('r')
-    for dp_id, am_a in filter_seq_no_repeats.items():
-        if new_key[:finish] == dp_id:
-            r += 1
-            if str(am_a) == str(seq) or len(str(am_a)) > len(str(seq)):
-                continue
-            elif len(str(am_a)) < len(str(seq)):
-                filter_seq_no_repeats['disprot|' + new_key[:finish]] = seq
-    if r == 0:
-        filter_seq_no_repeats['disprot|' + new_key[:finish]] = seq
-
-'''
 discriptor = []
 with Fasta('DisProt_2022_06.fasta') as genes:
     for record in genes:
         line = record.long_name
-        '''
-        finding_pos = str(line)[str(line).find('pos'):]
-        finding_pos = finding_pos.replace(finding_pos[:finding_pos.find(' ')], '')
-        finding_pos_2 = str(line)[:str(line).find('pos')]
-        final_disc = finding_pos_2 + finding_pos
-        '''
         discriptor.append(str(line))
 
 amiloid_seq_no_amil_disc = {}
