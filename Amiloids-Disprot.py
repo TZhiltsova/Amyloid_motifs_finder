@@ -69,8 +69,8 @@ for key, val in amiloid_seq_no_amil_disc.items():
     for key_amil, val_amil in amiloid_motifs_list_for_header.items():
         if key_amil in key:
             for i in val_amil:
-                if ' amilod_seq=' not in head_for_fasta_new:
-                    head_for_fasta_new += ' amilod_seq=' + i
+                if ' amyloid_seq=' not in head_for_fasta_new:
+                    head_for_fasta_new += ' amyloid_seq=' + i
                 else:
                     head_for_fasta_new += '|' + i
     amil_seq[head_for_fasta_new] = val
@@ -117,13 +117,13 @@ with open('table_amiloids.tsv', 'w') as tab:
         tab.write('\n')
 '''
 
-with open('Amiloid+Disprot_full_corr', 'w') as A_D:
+with open('Amyloid+Disprot_full_corr', 'w') as A_D:
     for key, val in amil_seq.items():
         A_D.write(str(key) + '\n')
         A_D.write(str(val) + '\n')
 
 
-with open('UniProt+DisProt_amiloids.tsv', 'w') as tab:
+with open('UniProt+DisProt_amyloids.tsv', 'w') as tab:
     for elem in table_short:
         for words in elem:
             tab.write(words + ', ')
