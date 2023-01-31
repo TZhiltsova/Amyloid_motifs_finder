@@ -1,7 +1,5 @@
 # Algorithm for searching of short amyloid motifs from Waltz-DB in DisProt database
 
----
-
 Material for master's degree work in ITMO University.
 
 Student: Zhiltsova T.
@@ -9,8 +7,6 @@ Student: Zhiltsova T.
 Supervisor: Kajava A., Pyankov I.
 
 ## Abstract
-
----
 
 The main purpose of this work in general is to expand amount of known amyloid forming peptides. 
 This may help to improve  prediction quality of amyloid predictors. 
@@ -22,15 +18,11 @@ part of peptide on amyloid region.
 
 ## Results
 
----
-
 We found 14 peptides in DisProt database that contain amyloid motifs from Waltz-DB. Half of them have already been studied
 on amyloid activity while half of them has a potential for further experiments on their biological properties. Our results
 are presented in "results.zip". 
 
 ## User Guid
-
----
 
 Download [Waltz-DB amyloid hexapeptides dataset](http://waltzdb.switchlab.org/sequences) (switch "Classification" 
 to "amyloid") in csv format and [DisProt dataset](https://disprot.org/download) in fasta and tsv format
@@ -47,8 +39,6 @@ be shown in descriptor). Sheet with list and UniProt/DisProt code of found pepti
 All requirements are shown in "requirements.txt".
 
 ## References
-
----
 
 1. Jacinte Beerten, J. WALTZ-DB: a benchmark database of amyloidogenic hexapeptides / J. Beerten, J. Van Durme, R. Gallardo, E. Capriotti, L. Serpell, F. Rousseau, J. Schymkowitz // Bioinformatics. – 2015. – Vol. 31. – p. 1698 – 1700.
 2. Louros, N. WALTZ-DB 2.0: an updated database containing structural information of experimentally determined amyloid-forming peptides / N. Louros, K. Konstantoulea, M. De Vleeschouwer, M. Ramakers, J. Schymkowitz, F. Rousseau // Nucleic Acids Research. – 2020. – Vol. 48. – p. D389 – D393.
